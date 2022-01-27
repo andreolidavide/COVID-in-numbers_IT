@@ -1,0 +1,68 @@
+---
+title: "Il COVID-19 in Italia"
+output: html_notebook
+---
+# Introduzione
+Prima di cominciare, devo fare un disclaimer: non sono un epidemiologo o un infettivologo, sono solo un chimico a cui piace analizzare dati e cercare di capire quello che i dati raccontano. Cercherò di essere il più trasparente possibile, ma prendete tutto quello che leggerete con spirito critico, confrontate con i dati che riporto, arrivate alle vostre conclusioni e poi confrontatele con le mie; se non dovessero combaciare non fatevi problemi a contattarmi se volete approfondire il discorso. 
+
+Fatta questa premessa, proseguo con la presentazione del progetto. 
+
+La pandemia ha cambiato le nostre vite in maniera inaspettata e repentina, e i suoi numeri sono al centro dell'attenzione mediatica dai suoi inizi. Non passa un giorno che non si sentano numeri dei nuovi casi, numeri di tamponi, numeri di ricoveri e così via; questi numeri sono importantissimi perché ci danno un'idea dell'andamento della situazione, ma decontestualizzati molto spesso possono essere interpretati nel modo sbagliato o portare a confusione.
+
+Con questo articolo, vorrei cercare di fare un po' di chiarezza sui numeri, su quello che significano e su come leggerli nel loro insieme.
+
+Per farlo, utilizzerò i seguenti strumenti:
+
+* Linguaggio R: è un linguaggio di programmazione con un focus sull'analisi statistica, che mi permette di manipolare i dati comodamente, e presentarli in maniera chiara
+* Dati sull'andamento epidemiologico: i dati sull'andamento epidemiologico sono quelli che sono pubblicati dal Dipartimento di Protezione Civile, li potete trovare [qui](https://github.com/pcm-dpc/COVID-19) 
+* Dati sulle vaccinazioni: i dati sulle vaccinazioni sono quelli pubblicati dal governo in formato aperto, li potete trovare [qui](https://github.com/italia/covid19-opendata-vaccini)
+
+Cercherò di delineare tutti i passaggi che seguo, sia per cercare di rendere le cose più chiare, che per dare la possibilità a chiunque di esplorare i gli stessi dati e arrivare alle proprie conclusioni.
+
+# Preparazione del dataset
+Per prima cosa, devo svolgere alcune operazioni preliminari per recuperare i dati più aggiornati dalle repository che citavo sopra e preparare l'ambiente di analisi.
+
+```{r}
+# Load the necessary libraries
+library(tidyverse)
+# Disable scientific notation for this session
+options(scipen=999)
+
+# Recover the national data and store it in the national_data data frame
+national_data_URL <- "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv"
+national_data  <-  read_csv(national_data_URL)
+national_data  <-  read_csv("./dpc-covid19-ita-andamento-nazionale.csv")
+
+# Recover the regional data and store it in the regional_data data frame
+regional_data_URL <- "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni.csv"
+regional_data <- read_csv(file=regional_data_URL)
+regional_data  <-  read_csv("./dpc-covid19-ita-regioni.csv")
+
+# Recover the population by age range for each region and store it in the regional_population_by_age data frame
+regional_population_by_age_URL <- "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-statistici-riferimento/popolazione-istat-regione-range.csv"
+regional_population_by_age <- read_csv(file=regional_population_by_age_URL)
+regional_population_by_age <- read_csv("./popolazione-istat-regione-range.csv")
+
+# Recover the vaccine data by age group and store it in the vaccine_data_by_age data frame
+vaccine_data_by_age_URL <- "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv"
+vaccine_data_by_age <- read_csv(vaccine_data_by_age_URL)
+vaccine_data_by_age <- read_csv("./somministrazioni-vaccini-latest.csv")
+
+# Recover the vaccine data and store it in the vaccine_data data frame
+vaccine_data_URL <- "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-summary-latest.csv"
+vaccine_data <- read_csv(vaccine_data_URL)
+vaccine_data <- read_csv("./somministrazioni-vaccini-summary-latest.csv")
+```
+
+
+
+```{r}
+ggplot(data = national_data) +
+  geom_point(mapping = aes(x = data, y=totale_positivi))
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
